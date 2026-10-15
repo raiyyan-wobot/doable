@@ -16,16 +16,14 @@ export function DialogContent(props: ParentProps<{ class?: string }>) {
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay
         class={cn(
-          "fixed inset-0 z-50 bg-scrim/32 motion-default-effects",
-          "data-[expanded]:animate-in data-[expanded]:fade-in data-[closed]:animate-out data-[closed]:fade-out",
+          "fixed inset-0 z-50 bg-scrim/32 scrim-motion",
         )}
       />
       <div class="fixed inset-0 z-50 flex items-center justify-center p-6">
         <DialogPrimitive.Content
           class={cn(
             "flex max-h-full w-full min-w-[17.5rem] max-w-[35rem] flex-col gap-4 overflow-y-auto rounded-xl bg-surface-container-high p-6 shadow-3 outline-none",
-            "motion-default-spatial data-[expanded]:animate-in data-[expanded]:fade-in data-[expanded]:zoom-in-90",
-            "data-[closed]:animate-out data-[closed]:fade-out data-[closed]:zoom-out-95 data-[closed]:motion-fast-effects",
+            "dialog-motion",
             props.class,
           )}
         >

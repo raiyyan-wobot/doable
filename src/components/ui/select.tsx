@@ -63,9 +63,7 @@ export function SelectField<T extends string>(props: SelectFieldProps<T>) {
         <SelectPrimitive.Content
           class={cn(
             "z-50 rounded-lg bg-surface-container-low p-1 shadow-2",
-            "origin-(--kb-select-content-transform-origin) motion-fast-spatial",
-            "data-[expanded]:animate-in data-[expanded]:fade-in data-[expanded]:zoom-in-95",
-            "data-[closed]:animate-out data-[closed]:fade-out",
+            "origin-(--kb-select-content-transform-origin) popup-motion",
           )}
         >
           <SelectPrimitive.Listbox class="flex max-h-80 flex-col gap-0.5 overflow-y-auto outline-none" />

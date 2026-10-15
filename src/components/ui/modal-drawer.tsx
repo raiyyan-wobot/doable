@@ -21,16 +21,14 @@ export function ModalDrawer(props: ModalDrawerProps) {
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay
           class={cn(
-            "fixed inset-0 z-40 bg-scrim/32 motion-default-effects",
-            "data-[expanded]:animate-in data-[expanded]:fade-in data-[closed]:animate-out data-[closed]:fade-out",
+            "fixed inset-0 z-40 bg-scrim/32 scrim-motion",
           )}
         />
         <DialogPrimitive.Content
           aria-label={props.label}
           class={cn(
             "fixed inset-y-0 left-0 z-40 flex w-[min(20rem,85vw)] flex-col gap-6 overflow-y-auto rounded-r-lg bg-surface-container px-3 pt-5 pb-4 shadow-2 outline-none",
-            "motion-default-spatial data-[expanded]:animate-in data-[expanded]:slide-in-from-left",
-            "data-[closed]:animate-out data-[closed]:slide-out-to-left data-[closed]:motion-fast-effects",
+            "drawer-motion",
           )}
         >
           {props.children}

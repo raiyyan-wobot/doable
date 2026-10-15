@@ -1,9 +1,10 @@
 /* M3 interaction utilities. */
 
 /* ---- Motion (expressive scheme; values in generated/motion.css) ----
-   Spatial = position, size, shape (may overshoot). Effects = color, opacity.
-   Sets both the transition properties and tw-animate-css's --tw-ease /
-   --tw-duration, so `animate-in`/`animate-out` use the same springs. */
+   Spatial = position, size, shape (may overshoot). Effects = color, opacity
+   (never overshoot). Use these only for transitions of a single kind; for
+   mixed properties use shape-motion / label-motion, and for overlays the
+   *-motion animation utilities below. */
 @utility motion-fast-spatial {
   --tw-ease: var(--md-motion-expressive-fast-spatial-easing);
   --tw-duration: var(--md-motion-expressive-fast-spatial-duration);
@@ -33,6 +34,106 @@
   --tw-duration: var(--md-motion-expressive-default-effects-duration);
   transition-timing-function: var(--tw-ease);
   transition-duration: var(--tw-duration);
+}
+
+/* ---- Interruptible enter/exit motion for overlays ----
+   M3 rule: spatial springs (may overshoot) only for size/position/shape;
+   effects springs (never overshoot) for opacity and color. Exits never use a
+   spatial spring: an overshooting exit swings back past 0 opacity, so a
+   closing menu would briefly reappear (the "previous menu flickers" bug).
+   Kobalte keeps the element mounted until these animations finish. */
+@keyframes m3-fade-in {
+  from { opacity: 0; }
+}
+@keyframes m3-fade-out {
+  to { opacity: 0; }
+}
+@keyframes m3-scale-in {
+  from { transform: scale(var(--m3-enter-scale, 0.9)); }
+}
+@keyframes m3-slide-in-start {
+  from { transform: translateX(-100%); }
+}
+@keyframes m3-slide-out-start {
+  to { transform: translateX(-100%); }
+}
+
+/* Menus, selects, popovers, tooltips: grow from the anchor, fade out. */
+@utility popup-motion {
+  &[data-expanded] {
+    animation:
+      m3-scale-in var(--md-motion-expressive-fast-spatial-duration) var(--md-motion-expressive-fast-spatial-easing),
+      m3-fade-in var(--md-motion-expressive-fast-effects-duration) var(--md-motion-expressive-fast-effects-easing);
+  }
+  &[data-closed] {
+    animation: m3-fade-out var(--md-motion-expressive-fast-effects-duration)
+      var(--md-motion-expressive-fast-effects-easing) forwards;
+  }
+}
+
+/* Dialogs: a slightly larger, slower entrance; quick fade on exit. */
+@utility dialog-motion {
+  --m3-enter-scale: 0.92;
+  &[data-expanded] {
+    animation:
+      m3-scale-in var(--md-motion-expressive-default-spatial-duration) var(--md-motion-expressive-default-spatial-easing),
+      m3-fade-in var(--md-motion-expressive-default-effects-duration) var(--md-motion-expressive-default-effects-easing);
+  }
+  &[data-closed] {
+    animation: m3-fade-out var(--md-motion-expressive-fast-effects-duration)
+      var(--md-motion-expressive-fast-effects-easing) forwards;
+  }
+}
+
+/* Scrims behind dialogs and drawers: opacity only. */
+@utility scrim-motion {
+  &[data-expanded] {
+    animation: m3-fade-in var(--md-motion-expressive-default-effects-duration)
+      var(--md-motion-expressive-default-effects-easing);
+  }
+  &[data-closed] {
+    animation: m3-fade-out var(--md-motion-expressive-fast-effects-duration)
+      var(--md-motion-expressive-fast-effects-easing) forwards;
+  }
+}
+
+/* Navigation drawer: slides in from the leading edge, slides out without bounce. */
+@utility drawer-motion {
+  &[data-expanded] {
+    animation: m3-slide-in-start var(--md-motion-expressive-default-spatial-duration)
+      var(--md-motion-expressive-default-spatial-easing);
+  }
+  &[data-closed] {
+    animation: m3-slide-out-start var(--md-motion-expressive-default-effects-duration)
+      var(--md-motion-expressive-default-effects-easing) forwards;
+  }
+}
+
+/* Controls whose shape morphs on press: the radius uses the spatial spring,
+   colors and shadow the effects spring, so hover colors never overshoot. */
+@utility shape-motion {
+  transition-property: border-radius, background-color, color, border-color, box-shadow;
+  transition-duration:
+    var(--md-motion-expressive-fast-spatial-duration), var(--md-motion-expressive-fast-effects-duration),
+    var(--md-motion-expressive-fast-effects-duration), var(--md-motion-expressive-fast-effects-duration),
+    var(--md-motion-expressive-fast-effects-duration);
+  transition-timing-function:
+    var(--md-motion-expressive-fast-spatial-easing), var(--md-motion-expressive-fast-effects-easing),
+    var(--md-motion-expressive-fast-effects-easing), var(--md-motion-expressive-fast-effects-easing),
+    var(--md-motion-expressive-fast-effects-easing);
+}
+
+/* Floating field label: position/size on the spatial spring, color on effects. */
+@utility label-motion {
+  transition-property: top, left, font-size, line-height, transform, color;
+  transition-duration:
+    var(--md-motion-expressive-fast-spatial-duration), var(--md-motion-expressive-fast-spatial-duration),
+    var(--md-motion-expressive-fast-spatial-duration), var(--md-motion-expressive-fast-spatial-duration),
+    var(--md-motion-expressive-fast-spatial-duration), var(--md-motion-expressive-fast-effects-duration);
+  transition-timing-function:
+    var(--md-motion-expressive-fast-spatial-easing), var(--md-motion-expressive-fast-spatial-easing),
+    var(--md-motion-expressive-fast-spatial-easing), var(--md-motion-expressive-fast-spatial-easing),
+    var(--md-motion-expressive-fast-spatial-easing), var(--md-motion-expressive-fast-effects-easing);
 }
 
 /* ---- State layer (Compose tokens/StateTokens.kt) ----

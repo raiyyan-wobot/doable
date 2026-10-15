@@ -34,9 +34,7 @@ export function MenuContent(props: ParentProps<{ class?: string }>) {
       <MenuPrimitive.Content
         class={cn(
           "z-50 flex min-w-[12rem] max-w-[17.5rem] flex-col gap-0.5 rounded-lg bg-surface-container-low p-1 shadow-2 outline-none",
-          "origin-(--kb-menu-content-transform-origin) motion-fast-spatial",
-          "data-[expanded]:animate-in data-[expanded]:fade-in data-[expanded]:zoom-in-90",
-          "data-[closed]:animate-out data-[closed]:fade-out data-[closed]:zoom-out-95",
+          "origin-(--kb-menu-content-transform-origin) popup-motion",
           props.class,
         )}
       >

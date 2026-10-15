@@ -13,7 +13,7 @@ import type { IconName } from "./icons";
 export const iconButtonVariants = cva(
   [
     "state-layer focus-ring inline-flex shrink-0 cursor-pointer items-center justify-center rounded-full",
-    "transition-[border-radius,background-color,color] motion-fast-spatial active:rounded-sm",
+    "shape-motion active:rounded-sm",
     "disabled:pointer-events-none disabled:text-on-surface/38",
   ],
   {

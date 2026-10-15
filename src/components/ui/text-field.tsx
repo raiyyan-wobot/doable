@@ -41,7 +41,7 @@ export function FieldOutline(props: { label: string; for?: string; floated?: boo
         for={props.for}
         class={cn(
           "pointer-events-none absolute origin-left text-on-surface-variant",
-          "transition-[top,left,font-size,line-height,color,transform] motion-fast-spatial",
+          "label-motion",
           "group-focus-within/field:text-primary",
           props.floated
             ? floatedLabel

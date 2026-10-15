@@ -57,9 +57,7 @@ function DatePopover(props: DatePopoverProps) {
           onOpenAutoFocus={(event) => event.preventDefault()}
           class={cn(
             "z-50 overflow-y-auto rounded-lg bg-surface-container-high p-2 shadow-3 outline-none",
-            "origin-(--kb-popover-content-transform-origin) motion-fast-spatial",
-            "data-[expanded]:animate-in data-[expanded]:fade-in data-[expanded]:zoom-in-95",
-            "data-[closed]:animate-out data-[closed]:fade-out",
+            "origin-(--kb-popover-content-transform-origin) popup-motion",
           )}
         >
           <Calendar value={props.value} min={props.min} max={props.max} onSelect={choose} />

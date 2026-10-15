@@ -26,7 +26,7 @@ export function ExtendedFab(props: ExtendedFabProps) {
       class={cn(
         "state-layer focus-ring inline-flex h-14 shrink-0 cursor-pointer items-center gap-2 rounded-lg px-4",
         "bg-primary-container text-title-medium text-on-primary-container shadow-3 hover:shadow-4",
-        "transition-[box-shadow,border-radius] motion-fast-spatial active:rounded-xl",
+        "shape-motion active:rounded-xl",
         props.class,
       )}
     >
