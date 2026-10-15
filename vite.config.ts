@@ -9,7 +9,9 @@ const host = process.env.TAURI_DEV_HOST;
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [solid(), tailwindcss()],
+  // No hot-reload transform under Vitest: it injects a virtual "@solid-refresh"
+  // module that Vitest resolves to an invalid file:// path on Windows.
+  plugins: [solid({ hot: !process.env.VITEST }), tailwindcss()],
   resolve: {
     alias: { "~": fileURLToPath(new URL("./src", import.meta.url)) },
   },
