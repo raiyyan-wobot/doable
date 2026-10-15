@@ -1,0 +1,101 @@
+# Builds installers for every platform when a version tag is pushed
+# (git tag v0.1.0 && git push --tags) and attaches them to a draft GitHub
+# Release. Review the draft, then publish it.
+#
+# Code signing is optional: without the secrets below, installers are built
+# unsigned (users see a SmartScreen / Gatekeeper warning; see docs/INSTALL.md).
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build (${{ matrix.name }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Linux (deb, rpm, AppImage)
+            os: ubuntu-22.04 # older glibc = the AppImage runs on more distros
+            args: --bundles deb,rpm,appimage
+          - name: Windows (NSIS, MSI)
+            os: windows-latest
+            args: --bundles nsis,msi
+          - name: macOS (universal DMG)
+            os: macos-latest
+            args: --target universal-apple-darwin --bundles app,dmg
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Linux system libraries
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libgtk-3-dev librsvg2-dev patchelf
+
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          # Both Apple architectures, for the universal macOS build.
+          targets: ${{ runner.os == 'macOS' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test && pnpm test:rust
+
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Optional macOS signing + notarization (Apple Developer account):
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: Doable ${{ github.ref_name }}
+          releaseBody: See CHANGELOG.md for what's new. Install instructions are in docs/INSTALL.md.
+          releaseDraft: true
+          prerelease: false
+          args: ${{ matrix.args }}
+
+  arch:
+    # Arch package (.pkg.tar.zst), built in an Arch container from the .deb.
+    name: Build (Arch Linux)
+    needs: build
+    runs-on: ubuntu-latest
+    container: archlinux:base-devel
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch the .deb from the draft release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pacman -Syu --noconfirm github-cli nodejs
+          version=$(node -p "require('./package.json').version")
+          mkdir -p src-tauri/target/release/bundle/deb
+          gh release download "${GITHUB_REF_NAME}" --repo "${GITHUB_REPOSITORY}" \
+            --pattern "Doable_${version}_amd64.deb" --dir src-tauri/target/release/bundle/deb
+      - name: makepkg (as an unprivileged user)
+        run: |
+          useradd -m builder && chown -R builder .
+          su builder -c "sh scripts/package-arch.sh"
+      - name: Attach to the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload "${GITHUB_REF_NAME}" packaging/arch/*.pkg.tar.zst --repo "${GITHUB_REPOSITORY}" --clobber

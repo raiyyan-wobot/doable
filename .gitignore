@@ -1,0 +1,18 @@
+node_modules
+dist
+# E2E screenshots
+e2e/screenshots/
+
+# Packaging outputs
+packaging/arch/*.pkg.tar.zst
+packaging/arch/src/
+packaging/arch/pkg/
+packaging/arch/*.deb
+
+# OS / editor / local env
+.DS_Store
+Thumbs.db
+*.log
+.env
+.env.*
+*.tsbuildinfo

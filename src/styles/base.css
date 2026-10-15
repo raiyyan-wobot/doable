@@ -1,0 +1,53 @@
+@layer base {
+  html {
+    /* Window background. Panes sit on top as `surface` (see AppShell). */
+    background-color: var(--md-sys-color-surface-container);
+    color: var(--md-sys-color-on-surface);
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark; /* native date pickers + scrollbars */
+  }
+
+  body {
+    @apply font-sans text-body-medium antialiased;
+    /* Desktop apps don't let you drag-select UI chrome; fields re-enable it below. */
+    user-select: none;
+  }
+
+  input,
+  textarea {
+    user-select: text;
+    caret-color: var(--md-sys-color-primary);
+  }
+
+  ::selection {
+    background-color: color-mix(in srgb, var(--md-sys-color-primary) 30%, transparent);
+  }
+
+  /* Thin, rounded scrollbars in M3 colors. The ::-webkit-* rules are for
+     WebKitGTK, the webview Tauri uses on Linux. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--md-sys-color-outline-variant) transparent;
+  }
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    background-color: var(--md-sys-color-outline-variant);
+  }
+
+  /* Respect the OS "reduce motion" setting: keep state changes, drop movement. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 1ms !important;
+      transition-duration: 1ms !important;
+    }
+  }
+}

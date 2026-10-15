@@ -1,0 +1,22 @@
+/* M3 Expressive shape scale (Compose tokens/ShapeTokens.kt).
+   Tailwind name → M3 token:
+     rounded-xs      4px   extra-small
+     rounded-sm      8px   small
+     rounded-md     12px   medium
+     rounded-lg     16px   large
+     rounded-lg-plus 20px  large-increased
+     rounded-xl     28px   extra-large
+     rounded-xl-plus 32px  extra-large-increased
+     rounded-2xl    48px   extra-extra-large
+     rounded-full          full (Tailwind built-in) */
+@theme {
+  --radius-*: initial;
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-lg-plus: 20px;
+  --radius-xl: 28px;
+  --radius-xl-plus: 32px;
+  --radius-2xl: 48px;
+}

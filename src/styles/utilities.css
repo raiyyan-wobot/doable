@@ -1,0 +1,98 @@
+/* M3 interaction utilities. */
+
+/* ---- Motion (expressive scheme; values in generated/motion.css) ----
+   Spatial = position, size, shape (may overshoot). Effects = color, opacity.
+   Sets both the transition properties and tw-animate-css's --tw-ease /
+   --tw-duration, so `animate-in`/`animate-out` use the same springs. */
+@utility motion-fast-spatial {
+  --tw-ease: var(--md-motion-expressive-fast-spatial-easing);
+  --tw-duration: var(--md-motion-expressive-fast-spatial-duration);
+  transition-timing-function: var(--tw-ease);
+  transition-duration: var(--tw-duration);
+}
+@utility motion-default-spatial {
+  --tw-ease: var(--md-motion-expressive-default-spatial-easing);
+  --tw-duration: var(--md-motion-expressive-default-spatial-duration);
+  transition-timing-function: var(--tw-ease);
+  transition-duration: var(--tw-duration);
+}
+@utility motion-slow-spatial {
+  --tw-ease: var(--md-motion-expressive-slow-spatial-easing);
+  --tw-duration: var(--md-motion-expressive-slow-spatial-duration);
+  transition-timing-function: var(--tw-ease);
+  transition-duration: var(--tw-duration);
+}
+@utility motion-fast-effects {
+  --tw-ease: var(--md-motion-expressive-fast-effects-easing);
+  --tw-duration: var(--md-motion-expressive-fast-effects-duration);
+  transition-timing-function: var(--tw-ease);
+  transition-duration: var(--tw-duration);
+}
+@utility motion-default-effects {
+  --tw-ease: var(--md-motion-expressive-default-effects-easing);
+  --tw-duration: var(--md-motion-expressive-default-effects-duration);
+  transition-timing-function: var(--tw-ease);
+  transition-duration: var(--tw-duration);
+}
+
+/* ---- State layer (Compose tokens/StateTokens.kt) ----
+   A currentColor overlay at hover 8%, focus 10%, pressed 10%, dragged 16%.
+   Kobalte's data-highlighted (keyboard/hover in menus) counts as hover.
+   Pointer presses are drawn by <Ripple /> (components/ui/ripple.tsx), so
+   `:active` isn't styled here; `data-pressed` covers keyboard presses. */
+@utility state-layer {
+  position: relative;
+  isolation: isolate;
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background-color: currentColor;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--md-motion-expressive-fast-effects-duration)
+      var(--md-motion-expressive-fast-effects-easing);
+  }
+  &:hover::before,
+  &[data-highlighted]::before {
+    opacity: 0.08;
+  }
+  &:focus-visible::before {
+    opacity: 0.1;
+  }
+  &[data-pressed]::before {
+    opacity: 0.1;
+  }
+  &:disabled::before,
+  &[data-disabled]::before {
+    opacity: 0;
+  }
+}
+
+/* ---- Scrollbar that only appears while hovering the scroll area ----
+   For side panels, where a permanent scrollbar reads as a divider line. */
+@utility scrollbar-on-hover {
+  scrollbar-color: transparent transparent;
+  &:hover {
+    scrollbar-color: var(--md-sys-color-outline-variant) transparent;
+  }
+  /* WebKitGTK (Tauri on Linux) styles scrollbars only via these pseudo-elements. */
+  &::-webkit-scrollbar-thumb {
+    background-color: transparent;
+  }
+  &:hover::-webkit-scrollbar-thumb {
+    background-color: var(--md-sys-color-outline-variant);
+  }
+}
+
+/* ---- Focus indicator ----
+   M3: 3dp outline in `secondary`, offset 2dp, following the component's shape. */
+@utility focus-ring {
+  outline: none;
+  &:focus-visible {
+    outline: 3px solid var(--md-sys-color-secondary);
+    outline-offset: 2px;
+  }
+}

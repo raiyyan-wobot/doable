@@ -1,0 +1,91 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Doable",
+  "version": "../package.json",
+  "identifier": "com.raiyyan.doable",
+  "build": {
+    "beforeDevCommand": "pnpm dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "pnpm build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Doable",
+        "width": 1100,
+        "height": 720,
+        "minWidth": 360,
+        "minHeight": 480,
+        "visible": false
+      }
+    ],
+    "security": {
+      "csp": {
+        "default-src": "'self'",
+        "script-src": "'self'",
+        "style-src": "'self' 'unsafe-inline'",
+        "font-src": "'self'",
+        "img-src": "'self' data:",
+        "connect-src": "ipc: http://ipc.localhost"
+      }
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": [
+      "deb",
+      "rpm",
+      "appimage",
+      "nsis",
+      "msi",
+      "dmg",
+      "app"
+    ],
+    "publisher": "Raiyyan",
+    "copyright": "Copyright \u00a9 2026 Raiyyan",
+    "license": "MIT",
+    "licenseFile": "../LICENSE",
+    "category": "Productivity",
+    "shortDescription": "A calm, local-first task manager",
+    "longDescription": "Doable is an offline-first task manager. Tasks are stored locally on your computer, filtered and sorted by a fast Rust backend, and shown in a Material 3 Expressive interface that follows your system accent color and theme.",
+    "icon": [
+      "icons/32x32.png",
+      "icons/64x64.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "linux": {
+      "deb": {
+        "section": "utils",
+        "recommends": [
+          "xdg-desktop-portal"
+        ]
+      },
+      "rpm": {
+        "recommends": [
+          "xdg-desktop-portal"
+        ]
+      },
+      "appimage": {
+        "bundleMediaFramework": false
+      }
+    },
+    "windows": {
+      "webviewInstallMode": {
+        "type": "embedBootstrapper"
+      },
+      "nsis": {
+        "installMode": "currentUser",
+        "displayLanguageSelector": false
+      }
+    },
+    "macOS": {
+      "minimumSystemVersion": "11.0"
+    },
+    "homepage": "https://github.com/raiyyan-wobot/doable"
+  }
+}

@@ -1,0 +1,27 @@
+# Arch Linux package for Doable, built from the release .deb (a "-bin" package).
+#
+#   pnpm tauri build --bundles deb        # produces the .deb this repackages
+#   cd packaging/arch && makepkg -cf      # produces doable-<ver>-1-x86_64.pkg.tar.zst
+#   sudo pacman -U doable-*.pkg.tar.zst   # install (pacman pulls in missing deps)
+#
+# Keep pkgver in sync with package.json (scripts/package-arch.sh does it).
+
+pkgname=doable
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="A calm, local-first task manager"
+arch=('x86_64')
+url="https://github.com/raiyyan-wobot/doable"
+license=('MIT')
+# Runtime libraries the app links against (the .deb lists their Debian names).
+depends=('webkit2gtk-4.1' 'gtk3' 'hicolor-icon-theme')
+optdepends=('xdg-desktop-portal: system accent color and font size')
+options=('!strip' '!debug')
+source=("Doable_${pkgver}_amd64.deb::file://${startdir}/../../src-tauri/target/release/bundle/deb/Doable_${pkgver}_amd64.deb"
+        "LICENSE::file://${startdir}/../../LICENSE")
+sha256sums=('SKIP' 'SKIP')
+
+package() {
+  bsdtar -xf data.tar.gz -C "${pkgdir}"
+  install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}

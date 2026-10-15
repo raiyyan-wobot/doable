@@ -1,0 +1,56 @@
+[package]
+name = "doable"
+version = "0.1.0"
+description = "Doable: a local-first task manager"
+authors = ["Raiyyan"]
+license = "MIT"
+rust-version = "1.85"
+edition = "2024"
+
+
+[lib]
+# The `_lib` suffix may seem redundant but it is necessary
+# to make the lib name unique and wouldn't conflict with the bin name.
+# This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
+name = "doable_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+chrono = { version = "0.4.45", features = ["serde"] }
+uuid = { version = "1.28.0", features = ["v4", "serde"] }
+thiserror = "2.0.21"
+csv = "1.4.0"
+tauri-plugin-dialog = "2.8.3"
+tauri-plugin-log = "2.10.1"
+log = "0.4.34"
+
+
+# Read the optimization guideline for more details: https://tauri.app/concept/size/#cargo-configuration
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = 3
+panic = "abort"
+strip = true
+
+[dev-dependencies]
+tauri = { version = "2", features = ["test"] }
+tempfile = "3.27.0"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+ashpd = { version = "0.13.13", default-features = false, features = ["tokio", "settings"] }
+futures-util = { version = "0.3.34", default-features = false }
+
+# Reading the OS accent color (src/system/accent/). Versions match what Tauri
+# already pulls in, so no duplicate crates get compiled.
+[target.'cfg(windows)'.dependencies]
+windows = { version = "0.62", features = ["UI_ViewManagement"] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2-app-kit = { version = "0.3", default-features = false, features = ["std", "NSColor", "NSColorSpace"] }

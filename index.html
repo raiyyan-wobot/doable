@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Doable</title>
+    <script>
+      // Before first paint: apply the last M3 color scheme (cached by
+      // src/theme/ThemeProvider.tsx) so the window doesn't flash the default
+      // colors while the app loads and reads the system accent.
+      try {
+        var cached = JSON.parse(localStorage.getItem("doable.scheme") || "null");
+        if (cached) {
+          document.documentElement.classList.toggle("dark", cached.dark);
+          document.documentElement.style.cssText = cached.css;
+        } else if (matchMedia("(prefers-color-scheme: dark)").matches) {
+          document.documentElement.classList.add("dark");
+        }
+      } catch (e) {}
+    </script>
+  </head>
+
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+
+    <script src="/src/index.tsx" type="module"></script>
+  </body>
+</html>

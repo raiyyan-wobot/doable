@@ -1,0 +1,6 @@
+allowBuilds:
+  # Browser-driver downloads pulled in by WebdriverIO. Not needed: E2E tests
+  # drive the real app through tauri-driver + WebKitWebDriver.
+  edgedriver: false
+  geckodriver: false
+  esbuild: false
