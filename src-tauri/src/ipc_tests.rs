@@ -18,6 +18,15 @@ use tempfile::TempDir;
 use crate::store::Store;
 use crate::with_commands;
 
+/// The origin of the app's own bundled pages. IPC from any other origin is
+/// treated as remote and rejected by the ACL ("not allowed"). WebView2 on
+/// Windows can't serve custom schemes directly, so Tauri uses an http URL there.
+const LOCAL_ORIGIN: &str = if cfg!(windows) {
+    "http://tauri.localhost"
+} else {
+    "tauri://localhost"
+};
+
 struct TestApp {
     // Kept alive for the duration of the test; dropping them tears things down.
     _app: App<MockRuntime>,
@@ -47,8 +56,7 @@ impl TestApp {
                 cmd: cmd.into(),
                 callback: CallbackFn(0),
                 error: CallbackFn(1),
-                // Must look like a local (app-bundled) origin, or the ACL rejects the call.
-                url: "tauri://localhost".parse().unwrap(),
+                url: LOCAL_ORIGIN.parse().unwrap(),
                 body: InvokeBody::Json(args),
                 headers: Default::default(),
                 invoke_key: INVOKE_KEY.to_string(),
